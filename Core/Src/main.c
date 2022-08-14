@@ -34,6 +34,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define ADC_MAX 0xFFF
+#define VOLT_MAX ((float)3.3f)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,6 +59,9 @@ extern bool adc_flag;
 extern char tx_buffer_lcd[40];
 uint8_t procent_init_lcd = 0;
 bool lcd_init_flag = 0;
+bool lcd_print_adc = 1;
+bool lcd_print_voltage = 0;
+bool lcd_print_conversation_val = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -69,6 +74,8 @@ static void MX_I2C1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void print_adc(void);
+float adc_to_volt(uint16_t adc_val);
+float map(float x, float in_min, float in_max, float out_min, float out_max);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -438,21 +445,64 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void print_adc(){
 	if(adc_flag){
-		lcd1602_SetCursor(0, 0);
-		sprintf(tx_buffer_lcd, "ADC_CH_1 %d", ADC_SMA_Data[0]);
-		lcd1602_Print_text(tx_buffer_lcd);
-		lcd1602_SetCursor(1, 0);
-		sprintf(tx_buffer_lcd, "ADC_CH_2 %d", ADC_SMA_Data[1]);
-		lcd1602_Print_text(tx_buffer_lcd);
-		lcd1602_SetCursor(2, 0);
-		sprintf(tx_buffer_lcd, "ADC_CH_3 %d", ADC_SMA_Data[2]);
-		lcd1602_Print_text(tx_buffer_lcd);
-		lcd1602_SetCursor(3, 0);
-		sprintf(tx_buffer_lcd, "ADC_CH_4 %d", ADC_SMA_Data[3]);
-		lcd1602_Print_text(tx_buffer_lcd);
-		adc_flag = 0;
+		if(lcd_print_adc){
+			lcd1602_SetCursor(0, 0);
+			sprintf(tx_buffer_lcd, "ADC_CH_1 %d", ADC_SMA_Data[0]);
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(1, 0);
+			sprintf(tx_buffer_lcd, "ADC_CH_2 %d", ADC_SMA_Data[1]);
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(2, 0);
+			sprintf(tx_buffer_lcd, "ADC_CH_3 %d", ADC_SMA_Data[2]);
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(3, 0);
+			sprintf(tx_buffer_lcd, "ADC_CH_4 %d", ADC_SMA_Data[3]);
+			lcd1602_Print_text(tx_buffer_lcd);
+			adc_flag = 0;
+		}
+		else if(lcd_print_voltage){
+			lcd1602_SetCursor(0, 0);
+			sprintf(tx_buffer_lcd, "ADC voltage %.2f", adc_to_volt(ADC_SMA_Data[0]));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(1, 0);
+			sprintf(tx_buffer_lcd, "ADC voltage %.2f", adc_to_volt(ADC_SMA_Data[1]));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(2, 0);
+			sprintf(tx_buffer_lcd, "ADC voltage %.2f", adc_to_volt(ADC_SMA_Data[2]));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(3, 0);
+			sprintf(tx_buffer_lcd, "ADC voltage %.2f", adc_to_volt(ADC_SMA_Data[3]));
+			lcd1602_Print_text(tx_buffer_lcd);
+			adc_flag = 0;
+		}
+		else if(lcd_print_conversation_val){
+			lcd1602_SetCursor(0, 0);
+			sprintf(tx_buffer_lcd, "Conv. val_1 %.2f", map(ADC_SMA_Data[0], -100, 500, 0, ADC_MAX));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(1, 0);
+			sprintf(tx_buffer_lcd, "Conv. val_2 %.2f", map(ADC_SMA_Data[1], -100, 500, 0, ADC_MAX));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(2, 0);
+			sprintf(tx_buffer_lcd, "Conv. val_3 %.2f", map(ADC_SMA_Data[2], -100, 500, 0, ADC_MAX));
+			lcd1602_Print_text(tx_buffer_lcd);
+			lcd1602_SetCursor(3, 0);
+			sprintf(tx_buffer_lcd, "Conv. val_4 %.2f", map(ADC_SMA_Data[3], -100, 500, 0, ADC_MAX));
+			lcd1602_Print_text(tx_buffer_lcd);
+			adc_flag = 0;
+		}
+
 	}
 }
+
+float adc_to_volt(uint16_t adc_val){
+	return ((float)adc_val * VOLT_MAX) / ADC_MAX;
+
+}
+
+float map(float x, float in_min, float in_max, float out_min, float out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
 /* USER CODE END 4 */
 
 /**
