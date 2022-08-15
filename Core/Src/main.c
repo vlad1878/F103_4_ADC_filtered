@@ -36,6 +36,7 @@
 /* USER CODE BEGIN PD */
 #define ADC_MAX 0xFFF
 #define VOLT_MAX ((float)3.3f)
+#define mkRefVcc ((float)1.205f)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,9 +60,11 @@ extern bool adc_flag;
 extern char tx_buffer_lcd[40];
 uint8_t procent_init_lcd = 0;
 bool lcd_init_flag = 0;
-bool lcd_print_adc = 1;
+bool lcd_print_adc = 0;
 bool lcd_print_voltage = 0;
 bool lcd_print_conversation_val = 0;
+volatile uint8_t mode_lcd = 0;
+float adc_ref_volt = 0.0f;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -76,6 +79,8 @@ static void MX_TIM3_Init(void);
 void print_adc(void);
 float adc_to_volt(uint16_t adc_val);
 float map(float x, float in_min, float in_max, float out_min, float out_max);
+void select_lcd_mode(void);
+float vRef_volt_adc(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -138,6 +143,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  select_lcd_mode();
 	  print_adc();
     /* USER CODE END WHILE */
 
@@ -495,7 +501,7 @@ void print_adc(){
 }
 
 float adc_to_volt(uint16_t adc_val){
-	return ((float)adc_val * VOLT_MAX) / ADC_MAX;
+	return ((float)adc_val * vRef_volt_adc());
 
 }
 
@@ -503,6 +509,38 @@ float map(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	if(GPIO_Pin = GPIO_PIN_13){
+		mode_lcd += mode_lcd;
+		if(mode_lcd > 2){
+			mode_lcd = 0;
+		}
+	}
+}
+
+void select_lcd_mode(){
+	switch (mode_lcd) {
+	case 0:
+		lcd_print_adc = 1;
+		lcd_print_voltage = 0;
+		lcd_print_conversation_val = 0;
+		break;
+	case 1:
+		lcd_print_adc = 0;
+		lcd_print_voltage = 1;
+		lcd_print_conversation_val = 0;
+		break;
+	case 2:
+		lcd_print_adc = 0;
+		lcd_print_voltage = 0;
+		lcd_print_conversation_val = 1;
+		break;
+	}
+}
+
+float vRef_volt_adc(){
+	return mkRefVcc / ADC_SMA_Data[4];
+}
 /* USER CODE END 4 */
 
 /**
