@@ -37,6 +37,14 @@
 #define ADC_MAX 0xFFF
 #define VOLT_MAX ((float)3.3f)
 #define mkRefVcc ((float)1.205f)
+#define MIN_VAL_ADC_1 (-100)
+#define MAX_VAL_ADC_1 (500U)
+#define MIN_VAL_ADC_2 (-100)
+#define MAX_VAL_ADC_2 (500U)
+#define MIN_VAL_ADC_3 (-100)
+#define MAX_VAL_ADC_3 (500U)
+#define MIN_VAL_ADC_4 (-100)
+#define MAX_VAL_ADC_4 (500U)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -78,7 +86,7 @@ static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 void print_adc(void);
 float adc_to_volt(uint16_t adc_val);
-float map(float x, float in_min, float in_max, float out_min, float out_max);
+float conversation_adc_to_val(float x, float in_min, float in_max, float out_min, float out_max);
 void select_lcd_mode(void);
 float vRef_volt_adc(void);
 /* USER CODE END PFP */
@@ -483,16 +491,16 @@ void print_adc(){
 		}
 		else if(lcd_print_conversation_val){
 			lcd1602_SetCursor(0, 0);
-			sprintf(tx_buffer_lcd, "Conv. val_1 %.2f", map(ADC_SMA_Data[0], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_1 %.2f", conversation_adc_to_val(ADC_SMA_Data[0], MIN_VAL_ADC_1, MAX_VAL_ADC_1, 0, ADC_MAX));
 			lcd1602_Print_text(tx_buffer_lcd);
 			lcd1602_SetCursor(1, 0);
-			sprintf(tx_buffer_lcd, "Conv. val_2 %.2f", map(ADC_SMA_Data[1], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_2 %.2f", conversation_adc_to_val(ADC_SMA_Data[1], MIN_VAL_ADC_2, MAX_VAL_ADC_2, 0, ADC_MAX));
 			lcd1602_Print_text(tx_buffer_lcd);
 			lcd1602_SetCursor(2, 0);
-			sprintf(tx_buffer_lcd, "Conv. val_3 %.2f", map(ADC_SMA_Data[2], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_3 %.2f", conversation_adc_to_val(ADC_SMA_Data[2], MIN_VAL_ADC_3, MAX_VAL_ADC_3, 0, ADC_MAX));
 			lcd1602_Print_text(tx_buffer_lcd);
 			lcd1602_SetCursor(3, 0);
-			sprintf(tx_buffer_lcd, "Conv. val_4 %.2f", map(ADC_SMA_Data[3], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_4 %.2f", conversation_adc_to_val(ADC_SMA_Data[3], MIN_VAL_ADC_4, MAX_VAL_ADC_4, 0, ADC_MAX));
 			lcd1602_Print_text(tx_buffer_lcd);
 			adc_flag = 0;
 		}
@@ -505,7 +513,7 @@ float adc_to_volt(uint16_t adc_val){
 
 }
 
-float map(float x, float in_min, float in_max, float out_min, float out_max) {
+float conversation_adc_to_val(float x, float in_min, float in_max, float out_min, float out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 

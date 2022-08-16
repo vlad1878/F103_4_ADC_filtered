@@ -29,21 +29,21 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  12 .debug_info   00010173  00000000  00000000  00020209  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 000026e4  00000000  00000000  0003037c  2**0
+ 13 .debug_abbrev 000026c6  00000000  00000000  0003037c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00001170  00000000  00000000  00032a60  2**3
+ 14 .debug_aranges 00001170  00000000  00000000  00032a48  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00001090  00000000  00000000  00033bd0  2**3
+ 15 .debug_ranges 00001090  00000000  00000000  00033bb8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00019aa4  00000000  00000000  00034c60  2**0
+ 16 .debug_macro  00019ad4  00000000  00000000  00034c48  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0001360c  00000000  00000000  0004e704  2**0
+ 17 .debug_line   0001360c  00000000  00000000  0004e71c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000934c3  00000000  00000000  00061d10  2**0
+ 18 .debug_str    00093583  00000000  00000000  00061d28  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  000f51d3  2**0
+ 19 .comment      00000050  00000000  00000000  000f52ab  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00005ba8  00000000  00000000  000f5224  2**2
+ 20 .debug_frame  00005ba8  00000000  00000000  000f52fc  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2667,7 +2667,7 @@ void print_adc(){
  8001764:	2100      	movs	r1, #0
  8001766:	2000      	movs	r0, #0
  8001768:	f7ff fca8 	bl	80010bc <lcd1602_SetCursor>
-			sprintf(tx_buffer_lcd, "Conv. val_1 %.2f", map(ADC_SMA_Data[0], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_1 %.2f", conversation_adc_to_val(ADC_SMA_Data[0], MIN_VAL_ADC_1, MAX_VAL_ADC_1, 0, ADC_MAX));
  800176c:	4b3e      	ldr	r3, [pc, #248]	; (8001868 <print_adc+0x25c>)
  800176e:	881b      	ldrh	r3, [r3, #0]
  8001770:	4618      	mov	r0, r3
@@ -2677,7 +2677,7 @@ void print_adc(){
  800177a:	f04f 0300 	mov.w	r3, #0
  800177e:	4a44      	ldr	r2, [pc, #272]	; (8001890 <print_adc+0x284>)
  8001780:	4944      	ldr	r1, [pc, #272]	; (8001894 <print_adc+0x288>)
- 8001782:	f000 f8a7 	bl	80018d4 <map>
+ 8001782:	f000 f8a7 	bl	80018d4 <conversation_adc_to_val>
  8001786:	4603      	mov	r3, r0
  8001788:	4618      	mov	r0, r3
  800178a:	f7fe fe4d 	bl	8000428 <__aeabi_f2d>
@@ -2693,7 +2693,7 @@ void print_adc(){
  80017a0:	2100      	movs	r1, #0
  80017a2:	2001      	movs	r0, #1
  80017a4:	f7ff fc8a 	bl	80010bc <lcd1602_SetCursor>
-			sprintf(tx_buffer_lcd, "Conv. val_2 %.2f", map(ADC_SMA_Data[1], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_2 %.2f", conversation_adc_to_val(ADC_SMA_Data[1], MIN_VAL_ADC_2, MAX_VAL_ADC_2, 0, ADC_MAX));
  80017a8:	4b2f      	ldr	r3, [pc, #188]	; (8001868 <print_adc+0x25c>)
  80017aa:	885b      	ldrh	r3, [r3, #2]
  80017ac:	4618      	mov	r0, r3
@@ -2703,7 +2703,7 @@ void print_adc(){
  80017b6:	f04f 0300 	mov.w	r3, #0
  80017ba:	4a35      	ldr	r2, [pc, #212]	; (8001890 <print_adc+0x284>)
  80017bc:	4935      	ldr	r1, [pc, #212]	; (8001894 <print_adc+0x288>)
- 80017be:	f000 f889 	bl	80018d4 <map>
+ 80017be:	f000 f889 	bl	80018d4 <conversation_adc_to_val>
  80017c2:	4603      	mov	r3, r0
  80017c4:	4618      	mov	r0, r3
  80017c6:	f7fe fe2f 	bl	8000428 <__aeabi_f2d>
@@ -2719,7 +2719,7 @@ void print_adc(){
  80017dc:	2100      	movs	r1, #0
  80017de:	2002      	movs	r0, #2
  80017e0:	f7ff fc6c 	bl	80010bc <lcd1602_SetCursor>
-			sprintf(tx_buffer_lcd, "Conv. val_3 %.2f", map(ADC_SMA_Data[2], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_3 %.2f", conversation_adc_to_val(ADC_SMA_Data[2], MIN_VAL_ADC_3, MAX_VAL_ADC_3, 0, ADC_MAX));
  80017e4:	4b20      	ldr	r3, [pc, #128]	; (8001868 <print_adc+0x25c>)
  80017e6:	889b      	ldrh	r3, [r3, #4]
  80017e8:	4618      	mov	r0, r3
@@ -2729,7 +2729,7 @@ void print_adc(){
  80017f2:	f04f 0300 	mov.w	r3, #0
  80017f6:	4a26      	ldr	r2, [pc, #152]	; (8001890 <print_adc+0x284>)
  80017f8:	4926      	ldr	r1, [pc, #152]	; (8001894 <print_adc+0x288>)
- 80017fa:	f000 f86b 	bl	80018d4 <map>
+ 80017fa:	f000 f86b 	bl	80018d4 <conversation_adc_to_val>
  80017fe:	4603      	mov	r3, r0
  8001800:	4618      	mov	r0, r3
  8001802:	f7fe fe11 	bl	8000428 <__aeabi_f2d>
@@ -2745,7 +2745,7 @@ void print_adc(){
  8001818:	2100      	movs	r1, #0
  800181a:	2003      	movs	r0, #3
  800181c:	f7ff fc4e 	bl	80010bc <lcd1602_SetCursor>
-			sprintf(tx_buffer_lcd, "Conv. val_4 %.2f", map(ADC_SMA_Data[3], -100, 500, 0, ADC_MAX));
+			sprintf(tx_buffer_lcd, "Conv. val_4 %.2f", conversation_adc_to_val(ADC_SMA_Data[3], MIN_VAL_ADC_4, MAX_VAL_ADC_4, 0, ADC_MAX));
  8001820:	4b11      	ldr	r3, [pc, #68]	; (8001868 <print_adc+0x25c>)
  8001822:	88db      	ldrh	r3, [r3, #6]
  8001824:	4618      	mov	r0, r3
@@ -2755,7 +2755,7 @@ void print_adc(){
  800182e:	f04f 0300 	mov.w	r3, #0
  8001832:	4a17      	ldr	r2, [pc, #92]	; (8001890 <print_adc+0x284>)
  8001834:	4917      	ldr	r1, [pc, #92]	; (8001894 <print_adc+0x288>)
- 8001836:	f000 f84d 	bl	80018d4 <map>
+ 8001836:	f000 f84d 	bl	80018d4 <conversation_adc_to_val>
  800183a:	4603      	mov	r3, r0
  800183c:	4618      	mov	r0, r3
  800183e:	f7fe fdf3 	bl	8000428 <__aeabi_f2d>
@@ -2820,9 +2820,9 @@ float adc_to_volt(uint16_t adc_val){
  80018d0:	46bd      	mov	sp, r7
  80018d2:	bd90      	pop	{r4, r7, pc}
 
-080018d4 <map>:
+080018d4 <conversation_adc_to_val>:
 
-float map(float x, float in_min, float in_max, float out_min, float out_max) {
+float conversation_adc_to_val(float x, float in_min, float in_max, float out_min, float out_max) {
  80018d4:	b590      	push	{r4, r7, lr}
  80018d6:	b085      	sub	sp, #20
  80018d8:	af00      	add	r7, sp, #0
